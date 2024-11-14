@@ -1,0 +1,44 @@
+.hero {
+  height: calc(100vh - 140px);
+  background-image: url('./../../assets/hero-image.jpg');
+  background-position: center;
+  // background-size: 100%;
+  // position: absolute;
+  // left: 0;
+  // right: 0;
+  // z-index: -1;
+  // top: 86px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+
+  .hero-text {
+    position: absolute;
+    right: 220px;
+    top: 100px;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    width: 18ch;
+  }
+
+  p {
+    font-size: 1.35rem;
+    margin-top: 0.85rem;
+    width: 42ch;
+  }
+
+  a {
+    text-decoration: none;
+    background-color: #e0c097;
+    padding: 0.75rem 1rem;
+    display: inline-block;
+    margin-top: 1rem;
+    color: white;
+    font-size: 1.15rem;
+    border-radius: 6px;
+  }
+}

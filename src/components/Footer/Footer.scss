@@ -1,0 +1,16 @@
+.footer {
+  background-color: #5c3d2e;
+  padding-block: 1.15rem;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+
+  p {
+    font-family: 'Cinzel Decorative', serif;
+    color: #e0c097;
+    font-size: 1.05rem;
+  }
+}
