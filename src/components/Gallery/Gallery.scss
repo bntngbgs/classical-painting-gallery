@@ -1,5 +1,7 @@
 .gallery {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 
   h1 {
     font-family: 'Cinzel Decorative', serif;
@@ -14,5 +16,42 @@
   ul {
     display: flex;
     flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-block: 2.5rem;
+  }
+
+  .error-message {
+    background-color: #f3d8da;
+    color: #cb444a;
+    text-align: center;
+    margin-top: 2rem;
+    padding-block: 0.5rem;
+    padding-inline: 1.5rem;
+    width: max-content;
+    margin-inline: auto;
+    border-radius: 8px;
+    font-size: 1.5rem;
+  }
+
+  /* HTML: <div class="loader"></div> */
+  .loader {
+    width: fit-content;
+    color: #e0c097;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 30px;
+    clip-path: inset(0 3ch 0 0);
+    animation: l4 1s steps(4) infinite;
+    align-self: center;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .loader:before {
+    content: 'Loading...';
+  }
+  @keyframes l4 {
+    to {
+      clip-path: inset(0 -1ch 0 0);
+    }
   }
 }
