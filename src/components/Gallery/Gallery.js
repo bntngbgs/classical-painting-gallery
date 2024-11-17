@@ -7,49 +7,63 @@ const Gallery = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetch(
+  const getPainting = async () => {
+    return fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true`
     )
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Error fetching data!');
+          throw new Error('Error Getting Painting ID');
         }
         return res.json();
       })
-      .then((data) => {
-        return data.objectIDs.slice(0, 199);
-      })
-      .then((id) => {
-        const paintingId = id.map((item) => {
-          return fetch(
-            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${item}`
-          ).then((res) => res.json());
-        });
+      .then(async (data) => {
+        let paintCollection = [];
+        const paintingId = data.objectIDs.slice(0, 199);
 
-        return Promise.all(paintingId).then((results) => {
-          return results;
-        });
-      })
-      .then((results) => {
-        results.map((item) => {
-          if (
-            item.artistDisplayName !== '' &&
-            item.primaryImage &&
-            item.title !== '' &&
-            item.classification === 'Paintings'
-          ) {
-            setData((data) => [...data, item]);
-            setLoading(false);
-          }
-          return results;
-        });
-      })
-      .catch((err) => {
-        setLoading(false);
-        setError(err);
+        for (let i = 0; i < paintingId.length; i++) {
+          const paintData = await getPaintingData(paintingId[i]);
+          paintCollection.push(paintData);
+        }
+
+        return paintCollection;
       });
-  }, []);
+  };
+
+  const getPaintingData = async (id) => {
+    return fetch(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        return result;
+      });
+  };
+
+  useEffect(() => {
+    const getpainting = async () => {
+      try {
+        const paintingData = await getPainting();
+        const resultData = paintingData
+          .filter((item, index) => {
+            return (
+              index ===
+              data.findIndex((obj) => {
+                return item.objectID === obj.objectID;
+              })
+            );
+          })
+          .slice(0, 16);
+        setData(resultData);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setError(error);
+      }
+    };
+
+    getpainting();
+  });
 
   return (
     <div className="gallery">
@@ -58,27 +72,17 @@ const Gallery = () => {
       {error && <p className="error-message">{error.message}</p>}
       {data && (
         <ul>
-          {data
-            .filter((item, index) => {
-              return (
-                index ===
-                data.findIndex((obj) => {
-                  return item.objectID === obj.objectID;
-                })
-              );
-            })
-            .slice(0, 16)
-            .map((item) => {
-              return (
-                <Card
-                  key={item.objectID}
-                  imgUrl={item.primaryImage}
-                  title={item.title}
-                  artist={item.artistDisplayName}
-                  year={item.accessionYear}
-                />
-              );
-            })}
+          {data.map((item) => {
+            return (
+              <Card
+                key={item.objectID}
+                imgUrl={item.primaryImage}
+                title={item.title}
+                artist={item.artistDisplayName}
+                year={item.accessionYear}
+              />
+            );
+          })}
         </ul>
       )}
     </div>
