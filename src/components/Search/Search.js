@@ -1,3 +1,4 @@
+import Card from '../Card/Card';
 import React, { useState } from 'react';
 import './Search.scss';
 import searchLogo from '../../assets/search-icon.svg';
@@ -5,32 +6,45 @@ import searchLogo from '../../assets/search-icon.svg';
 const Search = () => {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${search}`
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Error fetching data');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        const MAX_LENGTH = 16;
-        if (data.total === 0) {
-          throw new Error("Can't find appropriate paintings");
-        } else {
-          if (data.total < MAX_LENGTH) {
-            getSearchData(data.objectIDs);
-          } else {
-            data.objectIDs.slice(0, MAX_LENGTH);
-            getSearchData(data.objectIDs);
+    setData([]);
+
+    try {
+      const data = await fetch(
+        `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${search}`
+      );
+
+      if (!data.ok) {
+        throw new Error('Error: error fetching data');
+      }
+
+      const result = await data.json();
+
+      if (result.total === 0) {
+        throw new Error("Error: can't find appropriate paintings");
+      } else {
+        let paintingData = await getSearchData(result.objectIDs);
+
+        console.log(paintingData);
+
+        paintingData.map((item) => {
+          if (
+            item.artistDisplayName !== '' &&
+            item.primaryImage &&
+            item.title !== '' &&
+            item.classification === 'Paintings'
+          ) {
+            setData((data) => [...data, item]);
           }
-        }
-      });
+        });
+      }
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const getSearchData = (id) => {
@@ -41,7 +55,7 @@ const Search = () => {
     });
 
     return Promise.all(paintID).then((results) => {
-      return setData(results);
+      return results;
     });
   };
 
@@ -64,10 +78,22 @@ const Search = () => {
           </button>
         </div>
       </form>
-      <p>{data.map((item) => item.title)}</p>
-      {data.map((item) => {
-        return <img src={item.primaryImage} />;
-      })}
+      {error && <p>{error.message}</p>}
+      {data && (
+        <ul>
+          {data.slice(0, 16).map((item) => {
+            return (
+              <Card
+                key={item.objectID}
+                imgUrl={item.primaryImage}
+                title={item.title}
+                artist={item.artistDisplayName}
+                year={item.accessionYear}
+              />
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };
