@@ -7,7 +7,7 @@ const Gallery = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getPainting = async () => {
+  const getPainting = () => {
     return fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true`
     )
@@ -18,44 +18,52 @@ const Gallery = () => {
         return res.json();
       })
       .then(async (data) => {
-        let paintCollection = [];
         const paintingId = data.objectIDs.slice(0, 199);
 
-        for (let i = 0; i < paintingId.length; i++) {
-          const paintData = await getPaintingData(paintingId[i]);
-          paintCollection.push(paintData);
-        }
+        const paintData = await getPaintingData(paintingId);
 
-        return paintCollection;
+        return paintData;
       });
   };
 
-  const getPaintingData = async (id) => {
-    return fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-    )
-      .then((res) => res.json())
-      .then((result) => {
-        return result;
-      });
+  const getPaintingData = (id) => {
+    const paintID = id.map((item) => {
+      return fetch(
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${item}`
+      ).then((res) => res.json());
+    });
+
+    return Promise.all(paintID).then((results) => {
+      return results;
+    });
   };
 
   useEffect(() => {
     const getpainting = async () => {
       try {
         const paintingData = await getPainting();
-        const resultData = paintingData
-          .filter((item, index) => {
-            return (
-              index ===
-              data.findIndex((obj) => {
-                return item.objectID === obj.objectID;
-              })
-            );
+        const resultData = paintingData.filter((item, index) => {
+          return (
+            index ===
+            paintingData.findIndex((obj) => {
+              return item.objectID === obj.objectID;
+            })
+          );
+        });
+
+        resultData
+          .map((item) => {
+            if (
+              item.artistDisplayName !== '' &&
+              item.primaryImage &&
+              item.title !== '' &&
+              item.classification === 'Paintings'
+            ) {
+              setData((data) => [...data, item]);
+              setLoading(false);
+            }
           })
           .slice(0, 16);
-        setData(resultData);
-        setLoading(false);
       } catch (error) {
         setLoading(false);
         setError(error);
