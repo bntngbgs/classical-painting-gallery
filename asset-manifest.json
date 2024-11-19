@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/classical-painting-gallery/static/css/main.33e53dc1.css",
+    "main.js": "/classical-painting-gallery/static/js/main.dbce417e.js",
+    "static/media/hero-image.jpg": "/classical-painting-gallery/static/media/hero-image.b60b34bc032ecf929641.jpg",
+    "static/media/logo.png": "/classical-painting-gallery/static/media/logo.91411d929046bbdde381.png",
+    "static/media/met-museum-logo.jpg": "/classical-painting-gallery/static/media/met-museum-logo.6387ad8ca90036fe5693.jpg",
+    "index.html": "/classical-painting-gallery/index.html",
+    "static/media/search-icon.svg": "/classical-painting-gallery/static/media/search-icon.5afcea3ebe84d74874d259ee6fc109e9.svg",
+    "main.33e53dc1.css.map": "/classical-painting-gallery/static/css/main.33e53dc1.css.map",
+    "main.dbce417e.js.map": "/classical-painting-gallery/static/js/main.dbce417e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.33e53dc1.css",
+    "static/js/main.dbce417e.js"
+  ]
+}
