@@ -28,5 +28,15 @@
       font-size: 1.15rem;
       margin-bottom: 0.35rem;
     }
+
+    a {
+      text-decoration: none;
+      display: inline-block;
+      background-color: #e0c097;
+      padding: 0.35rem 0.5rem;
+      margin-top: 0.75rem;
+      border-radius: 4px;
+      color: white;
+    }
   }
 }

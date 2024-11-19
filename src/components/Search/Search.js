@@ -49,6 +49,7 @@ const Search = () => {
         setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       setError(error);
     }
   };
@@ -98,7 +99,7 @@ const Search = () => {
         </div>
       </form>
       {loading && <div className="loader"></div>}
-      {error && <p>{error.message}</p>}
+      {error && <p className="error-message">{error.message}</p>}
       {data && (
         <ul>
           {data.slice(0, 16).map((item) => {
@@ -109,6 +110,7 @@ const Search = () => {
                 title={item.title}
                 artist={item.artistDisplayName}
                 year={item.accessionYear}
+                wikiLink={item.objectURL}
               />
             );
           })}

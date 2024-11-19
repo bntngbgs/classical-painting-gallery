@@ -20,6 +20,19 @@
     margin-block: 2.5rem;
   }
 
+  .error-message {
+    background-color: #f3d8da;
+    color: #cb444a;
+    text-align: center;
+    margin-top: 2rem;
+    padding-block: 0.5rem;
+    padding-inline: 1.5rem;
+    width: max-content;
+    margin-inline: auto;
+    border-radius: 8px;
+    font-size: 1.5rem;
+  }
+
   .search-bar {
     width: 60%;
     margin-inline: auto;
