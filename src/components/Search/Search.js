@@ -7,15 +7,18 @@ const Search = () => {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setData([]);
+    setLoading(true);
+    setError(null);
 
     try {
       const data = await fetch(
-        `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${search}`
+        `https://collectionapi.metmuseum.org/public/collection/v1/search?isOnView=true&q=${search}`
       );
 
       if (!data.ok) {
@@ -27,20 +30,23 @@ const Search = () => {
       if (result.total === 0) {
         throw new Error("Error: can't find appropriate paintings");
       } else {
+        if (result.objectIDs.length > 150) {
+          result.objectIDs = result.objectIDs.slice(0, 75);
+        }
+
         let paintingData = await getSearchData(result.objectIDs);
 
-        console.log(paintingData);
-
-        paintingData.map((item) => {
-          if (
-            item.artistDisplayName !== '' &&
-            item.primaryImage &&
-            item.title !== '' &&
-            item.classification === 'Paintings'
-          ) {
-            setData((data) => [...data, item]);
-          }
+        const resultData = paintingData.filter((item, index) => {
+          return (
+            index ===
+              paintingData.findIndex((obj) => {
+                return item.objectID === obj.objectID;
+              }) && item !== ''
+          );
         });
+
+        setData(resultData);
+        setLoading(false);
       }
     } catch (error) {
       setError(error);
@@ -51,7 +57,20 @@ const Search = () => {
     const paintID = id.map((item) => {
       return fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${item}`
-      ).then((res) => res.json());
+      )
+        .then((res) => res.json())
+        .then((paintData) => {
+          if (
+            paintData.artistDisplayName !== '' &&
+            paintData.primaryImage &&
+            paintData.title !== '' &&
+            paintData.classification === 'Paintings'
+          ) {
+            return paintData;
+          } else {
+            return '';
+          }
+        });
     });
 
     return Promise.all(paintID).then((results) => {
@@ -78,6 +97,7 @@ const Search = () => {
           </button>
         </div>
       </form>
+      {loading && <div className="loader"></div>}
       {error && <p>{error.message}</p>}
       {data && (
         <ul>
